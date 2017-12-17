@@ -46,13 +46,13 @@
             </manifest>
         </jar>
     </target>
-	<fail message="pdf file does not exist">
+	<!--<fail message="pdf file does not exist">
 	<condition>
 		<not>
 			<available file="${build.dir}/book.pdf"/>
 		</not>
 		</condition>
-	</fail>
+	</fail>-->
 	
     <target name="main" depends="compile, jar, docs">
         <description>Main target</description>
