@@ -1,61 +1,72 @@
 <?xml version="1.0"?>
 <project name="Ant-Test" default="main" basedir=".">
-    <!-- Sets variables which can later be used. -->
-    <!-- The value of a property is accessed via ${} -->
-    <property name="src.dir" location="src" />
-    <property name="build.dir" location="bin" />
-    <property name="dist.dir" location="dist" />
-    <property name="docs.dir" location="docs" />
+	<!-- delete,mkdir,javac,fileset,javadoc,jar.,etc - these are the main commands-->
+	<!-- Sets variables which can later be used. -->
+	<!-- The value of a property is accessed via ${} -->
+	<!--Location is the folder under root or base directory i.e "JenkinsSampleBuild" project(This is the root directory)-->
+	<property name="src.dir" location="src" />
+	<property name="build.dir" location="bin" />
+	<property name="dist.dir" location="dist" />
+	<property name="docs.dir" location="docs" />
+	<property name="dependentlib.dir" location="dependentlib" />
 
-    <!-- Deletes the existing build, docs and dist directory-->
-    <target name="clean">
-        <delete dir="${build.dir}" />
-        <delete dir="${docs.dir}" />
-        <delete dir="${dist.dir}" />
-    </target>
+	<!-- Deletes the existing build, docs and dist directory-->
+	<target name="clean"><!-- You can give any name like clean -->
+		<delete dir="${build.dir}" />
+		<delete dir="${docs.dir}" />
+		<delete dir="${dist.dir}" />
+	</target>
 
-    <!-- Creates the  build, docs and dist directory-->
-    <target name="makedir">
-        <mkdir dir="${build.dir}" />
-        <mkdir dir="${docs.dir}" />
-        <mkdir dir="${dist.dir}" />
-    </target>
+	<!-- Creates the  build, docs and dist directory-->
+	<target name="makedir">
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${docs.dir}" />
+		<mkdir dir="${dist.dir}" />
+	</target>
+	
+	<!--This is the dependent libraries required to complile the java class files found in root folder "/" -->
+	<path id="classpath" location="dependentlib">
+		<fileset dir="${dependentlib.dir}">
+			<include name="**/*.jar" /><!--** represent all the files,* represent filename-->
+		</fileset>
+	</path>
 
-    <!-- Compiles the java code (including the usage of library for JUnit -->
-    <target name="compile" depends="clean, makedir">
-        <javac srcdir="${src.dir}" destdir="${build.dir}">
-        </javac>
+	<!-- Compiles the java code (including the usage of library for JUnit -->
+	<target name="compile" depends="clean, makedir">
+		<javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="classpath"><!-- refer the classpath of all the dependent jars required to compile the java files-->
+		</javac>
 
-    </target>
+	</target>
 
-    <!-- Creates Javadoc -->
-    <target name="docs" depends="compile">
-        <javadoc packagenames="src" sourcepath="${src.dir}" destdir="${docs.dir}">
-            <!-- Define which files / directory should get included, we include all -->
-             <fileset dir="${src.dir}">
-                <include name="**" />
-             </fileset>
-        </javadoc>
-    </target>
+	<!-- Creates Javadoc -->
+	<target name="docs" depends="compile">
+		<javadoc packagenames="src" sourcepath="${src.dir}" destdir="${docs.dir}">
+			<!-- Define which files / directory should get included, we include all -->
+			<fileset dir="${src.dir}">
+				<include name="**" />
+			</fileset>
+		</javadoc>
+	</target>
 
-    <!--Creates the deployable jar file  -->
-    <target name="jar" depends="compile">
-        <jar destfile="${dist.dir}\de.vogella.build.test.ant.jar" basedir="${build.dir}">
-            <manifest>
-                <attribute name="Main-Class" value="test.Main" />
-            </manifest>
-        </jar>
-    </target>
+	<!--Creates the deployable jar file  -->
+	<target name="jar" depends="compile">
+		<jar destfile="${dist.dir}\org.sample.build.ant.first.test.ant.jar" basedir="${build.dir}">
+			<manifest>
+				<attribute name="Main-Class" value="test.Main" />
+			</manifest>
+		</jar>
+	</target>
+	<!-- This is to test the failure feature of the build-->
 	<!--<fail message="pdf file does not exist">
 	<condition>
 		<not>
-			<available file="${build.dir}/book.pdf"/>
+			<available file="${build.dir}/sample.pdf"/>
 		</not>
 		</condition>
 	</fail>-->
-	
-    <target name="main" depends="compile, jar, docs">
-        <description>Main target</description>
-    </target>
+
+	<target name="main" depends="compile, jar, docs">
+		<description>Main target</description>
+	</target>
 
 </project>
